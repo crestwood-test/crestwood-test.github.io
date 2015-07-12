@@ -2,8 +2,25 @@ app.controller('IndexController', ['$scope', function($scope){
 	
   $scope.validateLogin = function(user){
 
-    // Do Parse validation here.
-    window.alert("validate");
+    // Ensure that the user entered an email and password
+    if (user.email && user.password){
+      Parse.initialize("N7SiZg1sfRYhCWwPT0jc7qayEqKcvjtsj7cHzn72", "kVSHLLY9Xq3zNR3ldJcLEMI1d2jqnxaCy0Z8Ud2l");
+      // Do Parse validation here.
+      Parse.User.logIn(user.email, user.password, {
+        success: function(user) {
+          // Do stuff after successful login.
+          window.location.href="/app/js/views/studentIndex.html";
+        },
+        error: function(user, error) {
+          // The login failed. Check error to see why.
+          // debugger;
+          //debugger;
+          $('#message_error').append("<p>" + error.message + "</p>").show();
+
+          //alert(error);
+        }
+      });
+    }
   }
   
   $scope.title = 'This is my own string';
