@@ -1,5 +1,12 @@
 app.controller('IndexController', ['$scope', function($scope){
-	$scope.title = 'This is my own string';
+	
+  $scope.validateLogin = function(user){
+
+    // Do Parse validation here.
+    window.alert("validate");
+  }
+  
+  $scope.title = 'This is my own string';
   $scope.promo = "15% off all childrens books.";
 
   $scope.products = 
