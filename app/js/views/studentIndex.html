@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-
 <style>
 	#logout {
 		float: right;
@@ -38,7 +36,7 @@
 	    <h2> All Available Tests</h2>
 	        <div class="container" style="margin-top: 10px">
 	            <div class="col-md-12" ng-repeat="class in classes">
-	            	<h3>{{ class.name }}</h3>
+	            	<h3>{{ class.className }}</h3>
 	            	<table class="table">
 	            	<!-- <table class="table table-hover"> -->
 					    <thead>
@@ -47,8 +45,8 @@
 					      </tr>
 					    </thead>
 					    <tbody>
-					      <tr ng-repeat="test in availableTests">
-					        <td><a target="_blank" href="{{test.publishedUrl}}">{{ test.className }}</a></td>
+					      <tr ng-repeat="test in availableTests[$index]">
+					        <td><a target="_blank" href="{{test.publishedUrl}}">{{ test.testName }}</a></td>
 					      </tr>
 					    </tbody>
 				  </table>
@@ -72,20 +70,6 @@
 
 </body>
 
-<script type="text/javascript">
-	function toggleActiveTest (event) {
-	 	var buttonsImage = event.childNodes[0];
-	 	// debugger
-	 	// debugger 
-	 	if (buttonsImage.className == "active") {
-	 		buttonsImage.src = "/assets/images/x-mark.gif"
-	 		buttonsImage.className = "inactive";
-	 	} else { // Button is not active – change it's state to active
-	 		buttonsImage.src = "/assets/images/checkmark.png"
-	 		buttonsImage.className = "active";
-	 	}
-	 }
-</script>
 </html>
 
 

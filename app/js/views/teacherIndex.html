@@ -1,18 +1,91 @@
-<div ng-controller="NavbarController" class="navbar navbar-default navbar-static-top">
-  <div class="navbar-header">
-    <a class="navbar-brand" href="#/"><i class="ion-ios7-pulse-strong"></i> Crestwood!</a>
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+  #logout {
+    float: right;
+  }
+    .colored {
+        /*background-color: rgb(210, 210, 210);*/
+    }
+</style>
+
+
+<head>
+  <title>Manage Tests</title>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+  <!-- Parse -->
+  <script src="//www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+
+</head>
+
+
+<body class="colored" ng-app="crestwoodPortal">
+  <div class="container colored" ng-controller="TeacherIndexController">
+    <p id="logout">Welcome {{ currentUser }} - <a ng-click="logout()">logout</a></p>
+    <h1>Crestwood Test Portal</h1>
+      <div class="col-md-12">
+      <h2> All Available Tests</h2>
+          <div class="container" style="margin-top: 10px">
+              <div class="col-md-12">
+              <h3>ENG101 – L0101</h3>
+              <table class="table">
+              <!-- <table class="table table-hover"> -->
+                <thead>
+                  <tr>
+                    <th>Test name</th>
+                    <th>Date created</th>
+                    <th>Last updated</th>
+                    <th>Active</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr >
+                    <td><a target="_blank" href="https://docs.google.com/forms/d/1ilDmn9ynJmHZqWH_VDzw9JfGOmRl1sOS5rxJoqt7JLA/viewform">Grammar fundamentals</a></td>
+                    <td>04/06/2015 – 10:40:00</td>
+                    <td>04/06/2015 – 10:40:00</td>
+                    <td>
+                      <button onclick="toggleActiveTest(this)"><img id="img1" src="/assets/images/x-mark.gif" width="30" height="30" class="inactive"></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><a target="_blank" href="http://google.ca/docs/about">Verbs one</a></td>
+                    <td>03/06/2015 – 15:07:33</td>
+                    <td>03/06/2015 – 15:07:33</td>
+                    <td>
+                      <button onclick="toggleActiveTest(this)"><img id="img2" src="/assets/images/x-mark.gif" width="30" height="30" class="inactive"></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      </div>
   </div>
-  <ul class="nav navbar-nav">
-    <li><a href="#/home">Home</a></li>
-    <li ng-if="isAuthenticated()"><a href="#/profile">Profile</a></li>
-    <li><a href="#/create_event">Create</a></li>
-    <li><a href="#/events">Events</a></li>
-  </ul>
-  <ul ng-if="!isAuthenticated()" class="nav navbar-nav pull-right">
-    <li><a href="#/login">Login</a></li>
-    <li><a href="#/signup">Sign up</a></li>
-  </ul>
-  <ul ng-if="isAuthenticated()" class="nav navbar-nav pull-right">
-    <li><a href="#" ng-click="logOut()">Logout</a></li>
-  </ul>
-</div>
+
+  <!-- angular -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script src="https://code.angularjs.org/1.3.15/angular-route.min.js"></script>
+    <script src="https://code.angularjs.org/1.3.15/angular-messages.min.js"></script>
+    <script src="https://code.angularjs.org/1.3.15/angular-resource.min.js"></script>
+    <script src="https://code.angularjs.org/1.3.15/angular-animate.min.js"></script>
+
+  <!-- Modules -->
+  <script src="/app/js/app.js"></script>
+    
+  <!-- Controllers -->
+  <script src="/app/js/controllers/TeacherIndexController.js"></script>
+
+</body>
+</html>
+
+
+

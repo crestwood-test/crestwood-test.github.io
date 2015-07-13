@@ -8,8 +8,19 @@ app.controller('IndexController', ['$scope', function($scope){
       // Do Parse validation here.
       Parse.User.logIn(user.email, user.password, {
         success: function(user) {
-          // Do stuff after successful login.
-          window.location.href="/app/js/views/studentIndex.html";
+          // Determine what type of user just logged in and display the correct page
+          switch(user.attributes.accountType){
+            case "student":
+              window.location = "/app/js/views/studentIndex.html";
+              break;
+            case "teacher":
+              window.location = "/app/js/views/teacherIndex.html";
+              break;
+            case "admin":
+              window.location = "/app/js/views/adminIndex.html";
+              break;
+          }
+          // window.location.href="/app/js/views/studentIndex.html";
         },
         error: function(user, error) {
           // The login failed. Check error to see why.

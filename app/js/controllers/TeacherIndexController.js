@@ -1,4 +1,4 @@
-app.controller('StudentIndexController', ['$scope', function($scope){
+app.controller('TeacherIndexController', ['$scope', function($scope){
 	
 	Parse.initialize("N7SiZg1sfRYhCWwPT0jc7qayEqKcvjtsj7cHzn72", "kVSHLLY9Xq3zNR3ldJcLEMI1d2jqnxaCy0Z8Ud2l");
 
@@ -32,7 +32,7 @@ app.controller('StudentIndexController', ['$scope', function($scope){
 		{
 			className: "ENG101",
 			testName: "Canadian Short Stories",
-			publishedUrl: "https://docs.google.com/a/crestwood.on.ca/forms/d/1Na7FSTZnsv-SG_nmEeY5wQ0UM9AsKsNKfW-sjDEOA7Q/viewform"
+			publishedURL: "https://docs.google.com/a/crestwood.on.ca/forms/d/1Na7FSTZnsv-SG_nmEeY5wQ0UM9AsKsNKfW-sjDEOA7Q/viewform"
 
 		}],
 
