@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.5.0"
+  },
+  "applications": {
+    "_default": {
+      "link": "crestwood-test"
+    },
+    "crestwood-test": {
+      "applicationId": "N7SiZg1sfRYhCWwPT0jc7qayEqKcvjtsj7cHzn72",
+      "masterKey": "itsD3SnZ4Nc1S7cYn5EgpP9uYfJDf2sr6ZKumXWz"
+    }
+  }
+}
