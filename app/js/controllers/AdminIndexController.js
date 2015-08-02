@@ -1,4 +1,4 @@
-app.controller('AdminIndexController', ['$scope', function($scope){
+app.controller('AdminIndexController', ['$scope', "checklist-model" function($scope checklist-model){
 	
 	//Parse.initialize("N7SiZg1sfRYhCWwPT0jc7qayEqKcvjtsj7cHzn72", "kVSHLLY9Xq3zNR3ldJcLEMI1d2jqnxaCy0Z8Ud2l");
 
