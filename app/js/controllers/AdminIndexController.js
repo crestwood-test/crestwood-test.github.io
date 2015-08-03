@@ -233,6 +233,9 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 								$('#courseError').hide();
 								$('#courseAdded').show();
 								getUnassignedCourses();
+								getAllCourses();
+								// Clear the text field on course creation.
+								$('#courseCodeInput').val("");
 							},
 							error: function(){
 
@@ -311,15 +314,116 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	*	Assign representes a teachers username and a course they should be assigned. 
 	*/
 
-	$scope.teacherAssignedCourses = {
+	$scope.teacherAssignCourses = {
 		courses: []
+	};
+
+	$scope.studentAssignCourses= {
+		courses: []
+	}
+
+	$scope.assignStudent = function(assign){
+		var studentEmail = assign.studentName;
+		var courseCodes = $scope.studentAssignCourses.courses;
+		var studentObject;
+		$scope.studentCoursesAlreadyAssigned = [];
+		$scope.studentCoursesSuccessfullyAssigned= [];
+
+		// Hide any previous messages
+		$('#assignStudentError').hide();
+		$('#studentAssignNoStudentSelected').hide();
+		$('#studentAssignNoCourseSelected').hide();
+		$('#assignStudentSuccess').hide();
+		$('#studentCoursesAlreadyAssigned').hide();
+		$('#studentCoursesAlreadyAssignedConfirmation').hide();
+
+		if (!studentEmail){
+			// Please select a student
+			// $('#studentAssignNoCourseSelected').hide();
+			// $('#assignStudentError').hide();
+			// $('#assignStudentSuccess').hide();
+			$('#studentAssignNoStudentSelected').show();
+			consoel.log("No student selected");
+
+		} else if (!courseCodes){
+			// Please select a class to assign
+			// $('#assignStudentError').hide();
+			// $('#assignStudentSuccess').hide();
+			// $('#studentAssignNoStudentSelected').hide();
+			$('#studentAssignNoCourseSelected').show();
+			console.log("No course seelcted");
+		} else { // Assign the student to the courses. 
+			$scope.allStudents.forEach(function(student){
+				if (student.name == studentEmail){
+					studentObject = student;
+					console.log("Found student object");
+				}
+			})
+
+			//
+			var AssignedCoursesStudents = Parse.Object.extend("AssignedCoursesStudents");
+			var assignedCourse = new AssignedCoursesStudents();
+			courseCodes.forEach(function(courseCode){
+
+				// Need to ensure the student is not already assigned this class
+				// If the course trying to be added is not already added, go ahead and add it
+				if ($.inArray(courseCode, studentObject.assignedCourses) < 0){
+
+					assignedCourse.set("assignedStudent", studentObject.object);
+					assignedCourse.set("courseCode", courseCode);
+
+					// Permissions
+					var acl = new Parse.ACL();
+					acl.setPublicWriteAccess(false);
+					acl.setPublicReadAccess(false);
+					acl.setRoleReadAccess("Administrator", true);
+					acl.setRoleWriteAccess("Administrator", true);
+					acl.setReadAccess(studentObject.object.id, true);
+					assignedCourse.setACL(acl);
+
+					assignedCourse.save(null, {
+						success: function(assignedCourse){
+							$('#assignStudentSuccess').show();
+							// $('#assignStudentError').hide();
+							// $('#studentAssignNoStudentSelected').hide();
+							// $('#studentAssignNoCourseSelected').hide();
+							// getStudents();
+							// getAllCourses();
+							$scope.studentCoursesSuccessfullyAssigned.push(assignedCourse.attributes.courseCode);
+
+						},
+						error: function(assignedCourse, error){
+							// $('#assignStudentSuccess').hide()
+							$('#assignStudentError').show();
+							// $('#studentAssignNoStudentSelected').hide();
+							// $('#studentAssignNoCourseSelected').hide();
+							console.log(error);
+
+						}
+					});
+				} else {
+					// User has already been assigned this course
+					$scope.studentCoursesAlreadyAssigned.push(courseCode);
+					$('#studentCoursesAlreadyAssigned').show();
+					// $('#studentCoursesAlreadyAssignedConfirmation').show();
+					console.log("Some courses already assigned: " + courseCode);
+					// getAllCourses();
+				}
+
+			});
+			// getAllCourses();
+			// Reset the selected courses
+			$scope.studentAssignCourses.courses = [];
+			getStudents();
+		}
+
 	};
 
 	$scope.assignTeacher = function(assign){
 		// debugger;
 
 		var teacherEmail = assign.teacherName;
-		var courseCodes = $scope.teacherAssignedCourses.courses
+		var courseCodes = $scope.teacherAssignCourses.courses
 		var teacherObject;
 
 		// Error checking
@@ -335,13 +439,12 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 			$('#assignTeacherSuccess').hide();
 			$('#teacherAssignNoCourseSelected').show();
 			$('#teacherAssignNoTeacherSelected').hide();
-		} else { // Assign the teacher to the classes.
+		} else { // Assign the teacher to the courses.
 
 			// Get the teacher user object. 
 			$scope.allTeachers.forEach(function(teacher){
 				if (teacher.name == teacherEmail){
 					teacherObject = teacher.object;
-					// break;
 				}
 			});
 
@@ -350,7 +453,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 			courseCodes.forEach(function(courseCode){
 				assignedCourse.set("assignedTeacher", teacherObject);
 				assignedCourse.set("courseCode", courseCode);
-				debugger;
+				// debugger;
 				var acl = new Parse.ACL();
 				acl.setPublicWriteAccess(false);
 				acl.setPublicReadAccess(false);
@@ -361,14 +464,21 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 
 				assignedCourse.save(null, {
 					success: function(assignedCourse){
-						$('#assignTeacherSuccess').show();
+						$('#teacherAssignNoCourseSelected').hide();
+						$('#teacherAssignNoTeacherSelected').hide();
 						$('#assignTeacherError').hide();
+						$('#assignTeacherSuccess').show();
+
 						getTeachers();
+						getUnassignedCourses();
 
 					},
 					error: function(assignedCourse, error){
 						$('#assignTeacherSuccess').hide();
+						$('#teacherAssignNoCourseSelected').hide();
+						$('#teacherAssignNoTeacherSelected').hide();
 						$('#assignTeacherError').show();
+						console.log(error);
 						// debugger;
 					}
 				});

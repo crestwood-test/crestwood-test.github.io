@@ -78,7 +78,7 @@ What do admins need to do?
           <p style="color: green"> Course successfully added</p>
         </div>
         <form>
-          Course code: <input type="text" ng-model="course.code" required> <br/>
+          Course code: <input id="courseCodeInput" type="text" ng-model="course.code" required> <br/>
           <input type="submit" ng-click="addCourse(course)" value="Add Class" />
         </form>
       
@@ -93,7 +93,7 @@ What do admins need to do?
         <p id="teacherAssignNoTeacherSelected" hidden> Please choose a teacher</p>
       </div>
       <div class="successes" style="color: green">
-        <p id="assignTeacherSuccess" hidden> Teacher assigned successfully</p>
+        <p id="assignTeacherSuccess" hidden> Teacher assigned to class(es) successfully</p>
       </div>
       <form>
         Assign Teacher:
@@ -103,7 +103,7 @@ What do admins need to do?
         To Course:
         <div ng-repeat="course in allUnassignedCourses | orderBy:'name'">
           <label>
-            <input class="checkbox" type="checkbox" checklist-model="teacherAssignedCourses.courses" checklist-value="course.name" />
+            <input class="checkbox" type="checkbox" checklist-model="teacherAssignCourses.courses" checklist-value="course.name" />
             <span>{{course.name}}</span>
           </label>
         </div>
@@ -145,19 +145,22 @@ What do admins need to do?
           <p id="assignStudentError" hidden> There was an error assigning this student</p>
           <p id="studentAssignNoCourseSelected" hidden> Please choose a course to assign</p>
           <p id="studentAssignNoStudentSelected" hidden> Please choose a student</p>
+          <p id="studentCoursesAlreadyAssigned" hidden>Unable to add student to the following courses becuase they are already assigned to them: {{studentCoursesAlreadyAssigned}}</p>
+
         </div>
         <div class="successes" style="color: green">
-          <p id="assignStudentSuccess" hidden> Student assigned to classes successfully</p>
+          <p id="assignStudentSuccess" hidden> Student assigned to class(es) successfully: {{studentCoursesSuccessfullyAssigned}}</p>
+          <!-- <p id="studentCoursesAlreadyAssignedConfirmation" hidden>Any other classes selected(if any) were successfully assigned</p> -->
         </div>
         <form>
           Assign Student:
             <select ng-model="assign.studentName" required>
-              <option ng-repeat="student in allStudents">{{student.name}}</option>
+              <option ng-repeat="student in allStudents | orderBy:'name'">{{student.name}}</option>
             </select><br>
           To Course:
           <div ng-repeat="course in allCourses | orderBy:'name'">
             <label>
-              <input class="checkbox" type="checkbox" checklist-model="teacherAssignedCourses.courses" checklist-value="course.name" />
+              <input class="checkbox" type="checkbox" checklist-model="studentAssignCourses.courses" checklist-value="course.name" />
               <span>{{course.name}}</span>
             </label>
           </div>
@@ -177,7 +180,7 @@ What do admins need to do?
           <p id="e" hidden>Temp success</p>
         </div>
 
-        <div class="col-md-12" ng-repeat="student in allStudents | filter:hasClasses">
+        <div  ng-repeat="student in allStudents | filter:hasClasses">
           <h4 style="font-weight: bold;">{{student.name}}</h4>
           <table>
             <thead>
@@ -209,7 +212,7 @@ What do admins need to do?
           <p id="e" hidden>Temp success</p>
         </div>
 
-        <div class="col-md-12">
+        <div>
           <table>
             <thead>
               <tr>
@@ -240,7 +243,7 @@ What do admins need to do?
           <p id="e" hidden>Temp success</p>
         </div>
 
-        <div class="col-md-12">
+        <div>
           <table>
             <thead>
               <tr>
@@ -271,7 +274,7 @@ What do admins need to do?
           <p id="e" hidden>Temp success</p>
         </div>
 
-        <div class="col-md-12">
+        <div>
           <table>
             <thead>
               <tr>
@@ -289,6 +292,10 @@ What do admins need to do?
             </tr>
           </table>
         </div>
+
+      <br>
+      <hr>
+      <br>
 
   <!-- angular -->
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
