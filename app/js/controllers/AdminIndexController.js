@@ -327,7 +327,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		var courseCodes = $scope.studentAssignCourses.courses;
 		var studentObject;
 		$scope.studentCoursesAlreadyAssigned = [];
-		$scope.studentCoursesSuccessfullyAssigned= [];
+		$scope.studentCoursesSuccessfullyAssigned = [];
 
 		// Hide any previous messages
 		$('#assignStudentError').hide();
@@ -339,17 +339,11 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 
 		if (!studentEmail){
 			// Please select a student
-			// $('#studentAssignNoCourseSelected').hide();
-			// $('#assignStudentError').hide();
-			// $('#assignStudentSuccess').hide();
 			$('#studentAssignNoStudentSelected').show();
 			consoel.log("No student selected");
 
 		} else if (!courseCodes){
 			// Please select a class to assign
-			// $('#assignStudentError').hide();
-			// $('#assignStudentSuccess').hide();
-			// $('#studentAssignNoStudentSelected').hide();
 			$('#studentAssignNoCourseSelected').show();
 			console.log("No course seelcted");
 		} else { // Assign the student to the courses. 
@@ -384,19 +378,12 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 					assignedCourse.save(null, {
 						success: function(assignedCourse){
 							$('#assignStudentSuccess').show();
-							// $('#assignStudentError').hide();
-							// $('#studentAssignNoStudentSelected').hide();
-							// $('#studentAssignNoCourseSelected').hide();
-							// getStudents();
-							// getAllCourses();
 							$scope.studentCoursesSuccessfullyAssigned.push(assignedCourse.attributes.courseCode);
 
 						},
 						error: function(assignedCourse, error){
 							// $('#assignStudentSuccess').hide()
 							$('#assignStudentError').show();
-							// $('#studentAssignNoStudentSelected').hide();
-							// $('#studentAssignNoCourseSelected').hide();
 							console.log(error);
 
 						}
@@ -405,13 +392,10 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 					// User has already been assigned this course
 					$scope.studentCoursesAlreadyAssigned.push(courseCode);
 					$('#studentCoursesAlreadyAssigned').show();
-					// $('#studentCoursesAlreadyAssignedConfirmation').show();
 					console.log("Some courses already assigned: " + courseCode);
-					// getAllCourses();
 				}
 
 			});
-			// getAllCourses();
 			// Reset the selected courses
 			$scope.studentAssignCourses.courses = [];
 			getStudents();
@@ -425,19 +409,20 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		var teacherEmail = assign.teacherName;
 		var courseCodes = $scope.teacherAssignCourses.courses
 		var teacherObject;
+		$scope.teacherCoursesSuccessfullyAssigned = [];
+
+		// Hide any previous errors
+		$('#teacherAssignNoCourseSelected').hide();
+		$('#assignTeacherError').hide();
+		$('#assignTeacherSuccess').hide();
+		$('#teacherAssignNoTeacherSelected').hide();
 
 		// Error checking
 		if (!teacherEmail){
 			// Please select a teacher
-			$('#teacherAssignNoCourseSelected').hide();
-			$('#assignTeacherError').hide();
-			$('#assignTeacherSuccess').hide();
 			$('#teacherAssignNoTeacherSelected').show();
 		} else if(!courseCodes){
 			// Please select a class to assign
-			$('#assignTeacherError').hide();
-			$('#assignTeacherSuccess').hide();
-			$('#teacherAssignNoCourseSelected').show();
 			$('#teacherAssignNoTeacherSelected').hide();
 		} else { // Assign the teacher to the courses.
 
@@ -464,24 +449,21 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 
 				assignedCourse.save(null, {
 					success: function(assignedCourse){
-						$('#teacherAssignNoCourseSelected').hide();
-						$('#teacherAssignNoTeacherSelected').hide();
-						$('#assignTeacherError').hide();
 						$('#assignTeacherSuccess').show();
 
-						getTeachers();
-						getUnassignedCourses();
+						$scope.teacherCoursesSuccessfullyAssigned.push(assignedCourse.attributes.courseCode);
 
+						// getTeachers();
+						// getUnassignedCourses();
 					},
 					error: function(assignedCourse, error){
-						$('#assignTeacherSuccess').hide();
-						$('#teacherAssignNoCourseSelected').hide();
-						$('#teacherAssignNoTeacherSelected').hide();
 						$('#assignTeacherError').show();
 						console.log(error);
-						// debugger;
 					}
 				});
+				// getTeachers();
+				// Refresh list of available courses now.
+				getUnassignedCourses();
 			});
 			
 		}
