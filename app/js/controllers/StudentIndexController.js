@@ -7,7 +7,7 @@ app.controller('StudentIndexController', ['$scope', function($scope){
 	
 	$scope.logout = function(){
 		Parse.User.logOut();
-		window.location = "/Index.html";
+		window.location = "/index.html";
 	}
 
 	$scope.classes = 
