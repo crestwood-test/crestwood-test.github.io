@@ -72,7 +72,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 										{
 											name : userObject.attributes.email,
 											id: userObject.id,
-											assignedClasses : courses,
+											assignedCourses : courses,
 											object: userObject
 										});
 										$scope.$apply();
@@ -132,44 +132,74 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 
 								},
 								error: function(error){
-									debugger;
+									// debugger;
 								}
 							});
 						});
 
 					},
 					error: function(error){
-						debugger;
+						// debugger;
 					}
 				});
 			},
 			error: function(error){
-				debugger;
+				// debugger;
 			}
 
 		});
-	}
+	};
 	getStudents();
 
+	getAdmins = function(){
+		// The ID of the Administrator ROLE in Parse
+		var parseAdministratorId = "o2rT3O0sFy";
+		$scope.allAdministrators = [];
+		var query = (new Parse.Query(Parse.Role));
+		query.get(parseAdministratorId, {
+			success: function(role){
+				role.relation('users').query().find({
+					success: function(userObjects){
+						userObjects.forEach(function(userObject){
+							// Don't display the super admin, which cannot be deleted.
+							// Super admin is tyler.haugen-stanley@crestwood.on.ca
+							if (userObject.id != "jdRKpS7qyE"){
+								$scope.allAdministrators.push(
+								{
+									name: userObject.attributes.email,
+									id: userObject.id,
+									object: userObject
+								});
+								// debugger;
+								$scope.$apply();
+							}
+						});
+
+					},
+					error: function(error){
+
+					}
+				});
+
+			},
+			error: function(erorr){
+
+			}
+
+		});
+
+	};
+	getAdmins();
+
 	/*
-	* Custom angular filter to only display the teachers that have been assigned courses.
+	* Custom angular filter to only display the users that have been assigned courses.
 	*/
-	$scope.hasClasses = function(teacher){
-		if (teacher.assignedClasses.length > 0){
-			return teacher;
+	$scope.hasClasses = function(user){
+		if (user.assignedCourses.length > 0){
+			return user;
 		}
 	}
-	// $scope.allTeachersAssignedClasses = [];
-	// getAllTeachersAssignedClasses = function(){
-	// 	$scope.allTeachers.forEach(function(teacher){
-	// 		debugger;
-	// 		if (teacher.assignedClasses.length != 0){
-	// 			$scope.allTeachersAssignedClasses.push(teacher);
-	// 		}
-	// 	});
-	// }
-	// getAllTeachersAssignedClasses();
-	
+
 	$scope.addCourse = function(course){
 		// Make sure course is unique by searhing for the course by its code
 		if (course){
@@ -349,9 +379,37 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	};
 	/*
 	 * Remove this user as the assigned teacher for this course
-	*/
+	 */
 	$scope.unassignTeacher = function(unassign){
 		debugger;
+
+	};
+	
+	/*
+	 * Remove this user as an assigned student for this course
+	 */
+	$scope.unassignStudent = function(unassign){
+
+	};
+
+	/*
+	 * Remove this teacher from the system
+	 */
+	$scope.deleteTeacher = function(teacherName){
+
+	};
+
+	/*
+	 * Remove this student from the system
+	 */
+	$scope.deleteStudent = function(studentName){
+
+	};
+
+	/*
+	 * Remove this admin from the system
+	 */
+	$scope.deleteAdmin = function(adminName){
 
 	};
 }]);
