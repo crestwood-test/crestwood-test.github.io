@@ -57,15 +57,14 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 							// var query = new Parse.Query(AssignedCourses);
 							query.equalTo("assignedTeacher", userObject);
 							query.find({
-								success: function(classObjects){
+								success: function(courseObjects){
 									// If the teacher is not already in our list, add them.
-									// if ($.inArray(userObject, $scope.allTeachers) < 0){
-										var classes = [];
+										var courses = [];
 										// Determine all the classes this user teaches
-										classObjects.forEach(function(classObject){
+										courseObjects.forEach(function(courseObject){
 											// debugger;
-											classes.push(classObject.attributes.courseCode);
-										})
+											courses.push(courseObject.attributes.courseCode);
+										});
 										// Ensure the teacher has been assigned at least one class.
 										//if (classes.length > 0){
 											// debugger;
@@ -73,11 +72,10 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 										{
 											name : userObject.attributes.email,
 											id: userObject.id,
-											assignedClasses : classes,
+											assignedClasses : courses,
 											object: userObject
 										});
 										$scope.$apply();
-									// }
 									//}
 								},
 								error: function(error){
@@ -99,8 +97,59 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		// debugger;
 		// return allTeachers;
 	};
-	// The first entry in the assigned classes array must correspond with the 
 	getTeachers();
+
+	getStudents = function(){
+		// The ID of the Student ROLE in Parse
+		var parseStudentId = "fyjKtYgSxh";
+		$scope.allStudents = [];
+		var query = (new Parse.Query(Parse.Role));
+		query.get(parseStudentId, {
+			success: function(role){
+				role.relation('users').query().find({
+					success: function(userObjects){
+						// These are all the student users
+						var AssignedCoursesStudents = Parse.Object.extend("AssignedCoursesStudents");
+						var query = new Parse.Query(AssignedCoursesStudents);
+						// getAssignedCourses(users);
+						userObjects.forEach(function(userObject){
+							query.equalTo("assignedStudent", userObject);
+							query.find({
+								success: function(courseObjects){
+									var courses = [];
+									courseObjects.forEach(function(courseObject){
+										courses.push(courseObject.attributes.courseCode);
+									});
+									// debugger;
+									$scope.allStudents.push(
+									{
+										name: userObject.attributes.email,
+										id: userObject.id,
+										assignedCourses: courses,
+										object: userObject
+									});
+									$scope.$apply();
+
+								},
+								error: function(error){
+									debugger;
+								}
+							});
+						});
+
+					},
+					error: function(error){
+						debugger;
+					}
+				});
+			},
+			error: function(error){
+				debugger;
+			}
+
+		});
+	}
+	getStudents();
 
 	/*
 	* Custom angular filter to only display the teachers that have been assigned courses.
@@ -167,6 +216,28 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		}
 	};
 
+	getAllCourses = function(){
+		$scope.allCourses = [];
+		var Courses = Parse.Object.extend("Courses");
+		var query = new Parse.Query(Courses);
+		query.find({
+			success: function(courses){
+				courses.forEach(function(course){
+					$scope.allCourses.push(
+					{
+						name:course.attributes.courseCode
+					});
+					$scope.$apply();
+				});
+
+			},
+			error: function(error){
+
+			}
+		});
+	}
+	getAllCourses();
+
 	getUnassignedCourses = function(){
 		$scope.allUnassignedCourses = [];
 		// Need to look at Courses. 
@@ -224,14 +295,12 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		// Error checking
 		if (!teacherEmail){
 			// Please select a teacher
-			$('#teacherAssignedSuccessfully').hide();
 			$('#teacherAssignNoCourseSelected').hide();
 			$('#assignTeacherError').hide();
 			$('#assignTeacherSuccess').hide();
 			$('#teacherAssignNoTeacherSelected').show();
 		} else if(!courseCodes){
 			// Please select a class to assign
-			$('#teacherAssignedSuccessfully').hide();
 			$('#assignTeacherError').hide();
 			$('#assignTeacherSuccess').hide();
 			$('#teacherAssignNoCourseSelected').show();
@@ -270,7 +339,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 					error: function(assignedCourse, error){
 						$('#assignTeacherSuccess').hide();
 						$('#assignTeacherError').show();
-						debugger;
+						// debugger;
 					}
 				});
 			});

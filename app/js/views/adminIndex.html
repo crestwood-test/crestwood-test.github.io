@@ -81,12 +81,11 @@ What do admins need to do?
       <h3>Assign Teachers</h3>
       <div class="errors" style="color: red" >
         <p id="assignTeacherError" hidden> There was an error assigning this teacher</p>
-        <p id="teacherAssignNoCourseSelected" hidden> Please chose a class to assign</p>
-        <p id="teacherAssignNoTeacherSelected" hidden> Please chose a teacher</p>
+        <p id="teacherAssignNoCourseSelected" hidden> Please choose a course to assign</p>
+        <p id="teacherAssignNoTeacherSelected" hidden> Please choose a teacher</p>
       </div>
       <div class="successes" style="color: green">
         <p id="assignTeacherSuccess" hidden> Teacher assigned successfully</p>
-        <p id="teacherAssignedSuccessfully" style="color: green" hidden> Teacher assigned to classes successfully</p>
       </div>
       <form>
         Assign Teacher:
@@ -127,42 +126,34 @@ What do admins need to do?
       </div>
       <hr>
       <h3>Assign Students</h3>
+        <div class="errors" style="color: red" >
+          <p id="assignStudentError" hidden> There was an error assigning this student</p>
+          <p id="studentAssignNoCourseSelected" hidden> Please choose a course to assign</p>
+          <p id="studentAssignNoStudentSelected" hidden> Please choose a student</p>
+        </div>
+        <div class="successes" style="color: green">
+          <p id="assignStudentSuccess" hidden> Student assigned to classes successfully</p>
+        </div>
+        <form>
+          Assign Student:
+            <select ng-model="assign.studentName" required>
+              <option ng-repeat="student in allStudents">{{student.name}}</option>
+            </select><br>
+          To Course:
+          <div ng-repeat="course in allCourses | orderBy:'name'">
+            <label>
+              <input class="checkbox" type="checkbox" checklist-model="teacherAssignedCourses.courses" checklist-value="course.name" />
+              <span>{{course.name}}</span>
+            </label>
+          </div>
+          <br>
+          <input type="submit" ng-click="assignStudent(assign)" value="Assign Student"></input>
+        </form>
       <hr>
       <h3>Assigned Students</h3>
       <hr>
       <h3>Delete users<h3>
 
-		<!-- <div id="tabs">
-		  <div class="row">
-		    <ul class="tab-list">
-		      <li class="active" id="tab_show">
-		        <a href="./eventPage_files/eventPage.html">Overview</a>
-		      </li>
-		      <li id="tab_schedules">
-		        <a href="http://www.hackathon.io/throw-a-thon/schedules">Schedule</a>
-		      </li>
-		      <li id="tab_rules">
-		        <a href="http://www.hackathon.io/throw-a-thon/rules">Rules</a>
-		      </li>
-		      <li id="tab_users">
-		        <a href="http://www.hackathon.io/throw-a-thon/people">Attendees</a>
-		      </li>
-		      <li id="tab_photos">
-		        <a href="http://www.hackathon.io/throw-a-thon/photos">Twitter Feed</a>
-		      </li>
-		      <li id="tab_prizes">
-		        <a href="http://www.hackathon.io/throw-a-thon/prizes">Prizes</a>
-		      </li>
-		      <li id="tab_brackets">
-		        <a href="/tournament-brackets.html">Tournament bracket</a>
-		      </li>
-		      <li id="contact_organizer_btn"><a href="http://www.hackathon.io/conversations?member_ids%5B%5D=34820&member_ids%5B%5D=22256" class="big-red-button" data-method="post" rel="nofollow">Contact Organizers</a></li>
-
-		    </ul>
-		  </div>
-
-		</div>
-      </div> -->
   </div>
 
   <!-- angular -->
