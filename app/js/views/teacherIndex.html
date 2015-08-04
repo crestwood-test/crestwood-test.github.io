@@ -34,9 +34,9 @@
     <h1>Crestwood Test Portal</h1>
       <div class="col-md-12">
       <h2> All Available Tests</h2>
-          <div class="container" style="margin-top: 10px">
+          <div class="container" style="margin-top: 10px" ng-repeat="course in coursesWithTests">
               <div class="col-md-12">
-              <h3>ENG101 – L0101</h3>
+              <h3>{{course.courseCode}}</h3>
               <table class="table">
               <!-- <table class="table table-hover"> -->
                 <thead>
@@ -48,20 +48,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr >
-                    <td><a target="_blank" href="https://docs.google.com/forms/d/1ilDmn9ynJmHZqWH_VDzw9JfGOmRl1sOS5rxJoqt7JLA/viewform">Grammar fundamentals</a></td>
-                    <td>04/06/2015 – 10:40:00</td>
-                    <td>04/06/2015 – 10:40:00</td>
+                  <tr ng-repeat="test in course.tests">
+                    <td><a target="_blank" href="{{test.publishedUrl}}">{{test.name}}</a></td>
+                    <td>{{test.createdAt | date:"MMM d, y 'at' h:mm:ss a"}}</td>
+                    <td>{{test.updatedAt | date:"MMM d, y 'at' h:mm:ss a"}}</td>
                     <td>
-                      <button onclick="toggleActiveTest(this)"><img id="img1" src="/assets/images/x-mark.gif" width="30" height="30" class="inactive"></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><a target="_blank" href="http://google.ca/docs/about">Verbs one</a></td>
-                    <td>03/06/2015 – 15:07:33</td>
-                    <td>03/06/2015 – 15:07:33</td>
-                    <td>
-                      <button onclick="toggleActiveTest(this)"><img id="img2" src="/assets/images/x-mark.gif" width="30" height="30" class="inactive"></button>
+                        <button ng-show="!test.active" ng-click="toggleActiveTest(test)"><img ng-src="/assets/images/x-mark.gif" width="30" height="30"></button>
+                        <button ng-show="test.active" ng-click="toggleActiveTest(test)"><img ng-src="/assets/images/checkmark.png" width="30" height="30"></button>
                     </td>
                   </tr>
                 </tbody>
