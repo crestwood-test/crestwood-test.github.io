@@ -2,7 +2,7 @@ app.controller('TeacherIndexController', ['$scope', function($scope){
 	
 	// Parse.initialize("N7SiZg1sfRYhCWwPT0jc7qayEqKcvjtsj7cHzn72", "kVSHLLY9Xq3zNR3ldJcLEMI1d2jqnxaCy0Z8Ud2l");
 
-	$scope.currentUser = Parse.User.current().attributes.email;
+	$scope.currentUserName = Parse.User.current().attributes.email;
 
 	
 	$scope.logout = function(){
@@ -16,35 +16,6 @@ app.controller('TeacherIndexController', ['$scope', function($scope){
 		var query = new Parse.Query(AllTests);
 		var currentUser = Parse.User.current();
 		$scope.coursesWithTests = [];
-
-		// var temp = 
-		// [
-		// 	{
-		// 		courseCode: "MAT4U01",
-		// 		tests: 
-		// 		[
-		// 			{
-		// 				name: "Math essentials",
-		// 				publishedUrl: "www.google.ca",
-		// 				active: false,
-		// 				versionHistory: ["Yesterday", "Friday"],
-		// 			}
-		// 		]
-		// 	},
-		// 	{
-		// 		courseCode: "ENG4U01",
-		// 		tests:
-		// 		[
-		// 			{
-		// 				name: "Spelling 101",
-		// 				publishedUrl: "www.google.com",
-		// 				active: false,
-		// 				versionHistory: ["Today", "Tomorrow"],
-		// 			}
-		// 		]
-		// 	}
-		// ]
-		
 
 		query.equalTo("PublishingUser", currentUser);
 		query.find({
@@ -125,3 +96,32 @@ app.controller('TeacherIndexController', ['$scope', function($scope){
 		test.active = !test.active;
 	};
 }]);
+
+
+		// var temp = 
+		// [
+		// 	{
+		// 		courseCode: "MAT4U01",
+		// 		tests: 
+		// 		[
+		// 			{
+		// 				name: "Math essentials",
+		// 				publishedUrl: "www.google.ca",
+		// 				active: false,
+		// 				versionHistory: ["Yesterday", "Friday"],
+		// 			}
+		// 		]
+		// 	},
+		// 	{
+		// 		courseCode: "ENG4U01",
+		// 		tests:
+		// 		[
+		// 			{
+		// 				name: "Spelling 101",
+		// 				publishedUrl: "www.google.com",
+		// 				active: false,
+		// 				versionHistory: ["Today", "Tomorrow"],
+		// 			}
+		// 		]
+		// 	}
+		// ]
