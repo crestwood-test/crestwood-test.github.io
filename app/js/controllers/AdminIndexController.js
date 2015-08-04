@@ -36,8 +36,6 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		// The ID of the Teacher ROLE in parse.
 		var pasreTeacherId = 'E55DQCNBCp';
 		$scope.allTeachers = [];
-		// var allTeachers = [];
-		// Parse call.
 		var query = (new Parse.Query(Parse.Role));
 		query.get(pasreTeacherId, {
 			success: function(role){
@@ -325,6 +323,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	$scope.assignStudent = function(assign){
 		var studentEmail = assign.studentName;
 		var courseCodes = $scope.studentAssignCourses.courses;
+		debugger;
 		var studentObject;
 		$scope.studentCoursesAlreadyAssigned = [];
 		$scope.studentCoursesSuccessfullyAssigned = [];

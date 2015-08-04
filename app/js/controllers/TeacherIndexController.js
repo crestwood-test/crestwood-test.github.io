@@ -96,32 +96,3 @@ app.controller('TeacherIndexController', ['$scope', function($scope){
 		test.active = !test.active;
 	};
 }]);
-
-
-		// var temp = 
-		// [
-		// 	{
-		// 		courseCode: "MAT4U01",
-		// 		tests: 
-		// 		[
-		// 			{
-		// 				name: "Math essentials",
-		// 				publishedUrl: "www.google.ca",
-		// 				active: false,
-		// 				versionHistory: ["Yesterday", "Friday"],
-		// 			}
-		// 		]
-		// 	},
-		// 	{
-		// 		courseCode: "ENG4U01",
-		// 		tests:
-		// 		[
-		// 			{
-		// 				name: "Spelling 101",
-		// 				publishedUrl: "www.google.com",
-		// 				active: false,
-		// 				versionHistory: ["Today", "Tomorrow"],
-		// 			}
-		// 		]
-		// 	}
-		// ]

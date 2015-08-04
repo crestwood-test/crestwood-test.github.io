@@ -29,8 +29,6 @@ app.controller('StudentIndexController', ['$scope', function($scope){
 					var AllTests = Parse.Object.extend("AllTests");
 					var query2 = new Parse.Query(AllTests);
 
-					console.log(course.attributes.courseCode === "MAT4U01");
-
 					query2.equalTo("CourseCode", currentCourseCode);
 					query2.equalTo("Active", true);
 					query2.find({	// Get all active tests for each course code this student has been assinged
