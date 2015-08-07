@@ -330,7 +330,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	$scope.assignStudent = function(assign){
 		var studentEmail = assign.studentName;
 		var courseCodes = $scope.studentAssignCourses.courses;
-		debugger;
+		// debugger;
 		var studentObject;
 		$scope.studentCoursesAlreadyAssigned = [];
 		$scope.studentCoursesSuccessfullyAssigned = [];
@@ -498,24 +498,24 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		query.equalTo("assignedTeacher", teacherObject);
 		// There should only ever be one teacher assigned to one course code.
 		query.first({
-			success: function(object){
-				if (object){
-					object.destroy({
-						success: function(object){
+			success: function(assignedCourseObject){
+				if (assignedCourseObject){
+					assignedCourseObject.destroy({
+						success: function(assignedCourseObject){
 							// object delted successfully
 							getTeachers();
-							console.log("deleted");
+							console.log("Deleted assigned teacher course object" + assignedCourseObject);
 						},
-						error: function(object, error){
-							// error deleting object
-							console.log(error);
+						error: function(assignedCourseObject, error){
+							// error deleting assigned course object
+							console.log("Error: " + error + " Assigned course object: " + assignedCourseObject);
 						}
 					});
 				} else {
 					// TODO: Add error message
 				}
 			},
-			error: function(object, error){
+			error: function(assignedCourseObject, error){
 				// TODO: add error message.
 				console.log(error);
 
@@ -527,7 +527,43 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	/*
 	 * Remove this user as an assigned student for this course
 	 */
-	$scope.unassignStudent = function(unassign){
+	$scope.unassignStudent = function(studentEmail, assignedCourse){
+		var studentObject;
+
+		// Get the student user object. 
+		$scope.allStudents.forEach(function(student){
+			if (student.name == studentEmail){
+				studentObject = student.object;
+			}
+		});
+
+		var AssignedCoursesStudents = Parse.Object.extend("AssignedCoursesStudents");
+		var query = new Parse.Query(AssignedCoursesStudents);
+		query.equalTo("assignedStudent", studentObject);
+		query.equalTo("courseCode", assignedCourse);
+		// This student should only be assigned to this specific course once.
+		query.first({
+			success: function(assignedCourseObject){
+				if (assignedCourseObject){
+					assignedCourseObject.destroy({
+						success: function(assignedCourseObject){
+							getStudents();
+							console.log("Deleted assigned student course Object" + studentObject);
+						},
+						error: function(assignedCourseCodes, error){
+							//error deleting assigned course object
+							console.log("Error: " + error + " Assigned course object: " + assignedCourseObject);
+						}
+					});
+				} else {
+					// TODO: Add error message
+				}
+			},
+			error: function(studentObject, error){
+				console.log(error);
+
+			}
+		});
 
 	};
 
