@@ -12,10 +12,17 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 				$('#createUserForm').each(function() {
 		            this.reset();
 		        });
+				// $('#accountType').change(function(){
+				// 	$('#accountType').prop('selectedIndex',0);	
+				// })
+
+				$scope.user.accountType = "Student";
+				
 
 				$('#createUserSuccess').show();
 				$('#createUserError').hide();
 				getTeachers();
+				getStudents();
 				console.log(response);
 			},
 			error: function(error){
@@ -451,6 +458,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 						$('#assignTeacherSuccess').show();
 
 						$scope.teacherCoursesSuccessfullyAssigned.push(assignedCourse.attributes.courseCode);
+						getTeachers();
 
 						// getTeachers();
 						// getUnassignedCourses();
@@ -471,8 +479,48 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	/*
 	 * Remove this user as the assigned teacher for this course
 	 */
-	$scope.unassignTeacher = function(unassign){
-		debugger;
+	$scope.unassignTeacher = function(teacherEmail, assignedCourse){
+		// teacher is a strng
+		// assignedCourse is a string
+		var teacherObject;
+
+
+		// Get the teacher user object. 
+		$scope.allTeachers.forEach(function(teacher){
+			if (teacher.name == teacherEmail){
+				teacherObject = teacher.object;
+			}
+		});
+
+		// debugger;
+		var AssignedCourses = Parse.Object.extend("AssignedCourses");
+		var query = new Parse.Query(AssignedCourses);
+		query.equalTo("assignedTeacher", teacherObject);
+		// There should only ever be one teacher assigned to one course code.
+		query.first({
+			success: function(object){
+				if (object){
+					object.destroy({
+						success: function(object){
+							// object delted successfully
+							getTeachers();
+							console.log("deleted");
+						},
+						error: function(object, error){
+							// error deleting object
+							console.log(error);
+						}
+					});
+				} else {
+					// TODO: Add error message
+				}
+			},
+			error: function(object, error){
+				// TODO: add error message.
+				console.log(error);
+
+			}
+		});
 
 	};
 	

@@ -58,8 +58,8 @@ What do admins need to do?
         	E-mail: <input id="email" type="email" ng-model="user.name" required/><br />
         	Password: <input id="password" type="password" ng-model="user.password" required/> <br />
         	Account Type: 
-        		<select ng-model="user.accountType" required>
-        			<option value="Student">Student</option>
+        		<select id="accountType" ng-model="user.accountType">
+        			<option value="Student" selected>Student</option>
         			<option value="Teacher">Teacher</option>
         			<option value="Administrator">Administrator</option>
         		</select> <br />
@@ -128,7 +128,7 @@ What do admins need to do?
             </thead>  
             <tr ng-repeat="assignedCourse in teacher.assignedCourses">
               <td>{{ assignedCourse }}</td>
-              <td><button ng-click="unassignTeacher(unassign)">
+              <td><button ng-click="unassignTeacher(teacher.name, assignedCourse)">
                 <img ng-src="/assets/images/x-mark.gif"/>
               </button></td>
             </tr>
