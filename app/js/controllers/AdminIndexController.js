@@ -676,4 +676,28 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		}
 
 	};
+
+	// $scope.teachersExist = function(){
+	// 	if ($scope.allTeachers.length == 0){
+	// 		return false;
+	// 	}
+
+	// 	return true;
+	// };
+	
+	// $scope.studentsExist = function(){
+	// 	if ($scope.allStudents.length == 0){
+	// 		return false;
+	// 	}
+		
+	// 	return true;
+	// };
+
+	// $scope.adminsExist = function(){
+	// 	if ($scope.allAdminis.length == 0){
+	// 		return false;
+	// 	}
+		
+	// 	return true;
+	// };
 }]);
