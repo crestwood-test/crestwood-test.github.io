@@ -1,6 +1,4 @@
 app.controller('AdminIndexController', ['$scope', function($scope){
-	
-	//Parse.initialize("N7SiZg1sfRYhCWwPT0jc7qayEqKcvjtsj7cHzn72", "kVSHLLY9Xq3zNR3ldJcLEMI1d2jqnxaCy0Z8Ud2l");
 
 	$scope.currentUser = Parse.User.current().attributes.email;
 
@@ -277,6 +275,13 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	getAllCourses();
 
 	getUnassignedCourses = function(){
+
+		// Hide any previous errors/success messages
+		$('#teacherAssignNoCourseSelected').hide();
+		$('#assignTeacherError').hide();
+		$('#assignTeacherSuccess').hide();
+		$('#teacherAssignNoTeacherSelected').hide();
+
 		$scope.allUnassignedCourses = [];
 		// Need to look at Courses. 
 		var Courses = Parse.Object.extend("Courses");
@@ -479,18 +484,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	/*
 	 * Remove this user as the assigned teacher for this course
 	 */
-	$scope.unassignTeacher = function(teacherEmail, assignedCourse){
-		// teacher is a strng
-		// assignedCourse is a string
-		var teacherObject;
-
-
-		// Get the teacher user object. 
-		$scope.allTeachers.forEach(function(teacher){
-			if (teacher.name == teacherEmail){
-				teacherObject = teacher.object;
-			}
-		});
+	$scope.unassignTeacher = function(teacherObject, assignedCourse){
 
 		// debugger;
 		var AssignedCourses = Parse.Object.extend("AssignedCourses");
@@ -504,6 +498,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 						success: function(assignedCourseObject){
 							// object delted successfully
 							getTeachers();
+							getUnassignedCourses();
 							console.log("Deleted assigned teacher course object" + assignedCourseObject);
 						},
 						error: function(assignedCourseObject, error){
@@ -527,15 +522,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	/*
 	 * Remove this user as an assigned student for this course
 	 */
-	$scope.unassignStudent = function(studentEmail, assignedCourse){
-		var studentObject;
-
-		// Get the student user object. 
-		$scope.allStudents.forEach(function(student){
-			if (student.name == studentEmail){
-				studentObject = student.object;
-			}
-		});
+	$scope.unassignStudent = function(studentObject, assignedCourse){
 
 		var AssignedCoursesStudents = Parse.Object.extend("AssignedCoursesStudents");
 		var query = new Parse.Query(AssignedCoursesStudents);
@@ -570,21 +557,123 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 	/*
 	 * Remove this teacher from the system
 	 */
-	$scope.deleteTeacher = function(teacherName){
+	$scope.deleteTeacher = function(teacherObject){
+		// Before deleting a teacher from the user table, we must also unassign them from all classes.
+
+		// Get all courses this teacher has been assigned.
+		var AssignedCourses = Parse.Object.extend("AssignedCourses");
+		var query = new Parse.Query(AssignedCourses);
+		query.equalTo("assignedTeacher", teacherObject);
+		query.find({
+			success: function(assignedCourseObjects){
+				assignedCourseObjects.forEach(function(assignedCourseObject){
+					// Remove each record of each course this teacher has been assigned.
+					if (assignedCourseObject){
+						assignedCourseObject.destroy({
+							success: function(assignedCourseObject){
+								console.log("Deleted assigned teacher course Object" + assignedCourseObject.id);
+							},
+							error: function(assignedCourseObject, error){
+								console.log("Error: " + error + " Assigned course object: " + assignedCourseObject.id);
+							}
+						});
+					} else {
+						//TODO: Add error message (MAYBE) – No courses assigned to this teacher
+					}
+				});
+				// Now delete the actual teacher object
+				Parse.Cloud.run("deleteUser", {userId: teacherObject.id}, {
+					success: function(response){
+						console.log(response);
+						// Update the list of assigned teachers.
+						getTeachers();
+						$scope.$apply();
+					},
+					error: function(error){
+						console.log(error.message + " – Code: " + error.code);
+					}
+				});
+
+			},
+			error: function(error){
+				// Error getting courses assigned to this teacher
+			}
+		});
+
+
 
 	};
 
 	/*
 	 * Remove this student from the system
 	 */
-	$scope.deleteStudent = function(studentName){
+	$scope.deleteStudent = function(studentObject){
+		// Before deleting a student from the user table, we must also unassign them from all classes.
+
+		// Get all courses this studnet has been assigned.
+		var AssignedCoursesStudents = Parse.Object.extend("AssignedCoursesStudents");
+		var query = new Parse.Query(AssignedCoursesStudents);
+		query.equalTo("assignedStudent", studentObject);
+		query.find({
+			success: function(assignedCourseObjects){
+				assignedCourseObjects.forEach(function(assignedCourseObject){
+					// Remove each record of each course this studnet has been assigned.
+					if (assignedCourseObject){
+						assignedCourseObject.destroy({
+							success: function(assignedCourseObject){
+								console.log("Deleted assigned student course Object" + assignedCourseObject.id);
+							},
+							error: function(assignedCourseObject, error){
+								console.log("Error: " + error + " Assigned course object: " + assignedCourseObject.id);
+							}
+						});
+					} else {
+						//TODO: Add error message (MAYBE) – No courses assigned to this student
+					}
+				});
+				// Now delete the actual student object
+				Parse.Cloud.run("deleteUser", {userId: studentObject.id}, {
+					success: function(response){
+						console.log(response);
+						// Update the list of assigned teachers.
+						getStudents();
+						$scope.$apply();
+					},
+					error: function(error){
+						console.log(error.message + " – Code: " + error.code);
+					}
+				});
+
+			},
+			error: function(error){
+				// Error getting courses assigned to this student
+
+			}
+		});
 
 	};
 
 	/*
 	 * Remove this admin from the system
 	 */
-	$scope.deleteAdmin = function(adminName){
+	$scope.deleteAdmin = function(adminObject){
+		// Ensure that Admin's can't delete themselves. 
+		if (adminObject.id == Parse.User.current().id){
+			alert("Sorry, You can not delete yourself");
+		} else {
+			// Admin's are not assigned courses, simply remove them from the system.
+			Parse.Cloud.run("deleteUser", {userId: adminObject.id}, {
+				success: function(response){
+					console.log(response);
+					// Update the list of assigned teachers.
+					getAdmins();
+					$scope.$apply();
+				},
+				error: function(error){
+					console.log(error.message + " – Code: " + error.code);
+				}
+			});
+		}
 
 	};
 }]);

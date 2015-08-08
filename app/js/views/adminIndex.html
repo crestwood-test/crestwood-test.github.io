@@ -52,7 +52,7 @@ What do admins need to do?
           <p style="color: red"> There was an error adding a user</p>
         </div>
         <div id="createUserSuccess" hidden>
-          <p style="color: green"> Create added successfully</p>
+          <p style="color: green"> User added successfully</p>
         </div>
         <form id="createUserForm">	
         	E-mail: <input id="email" type="email" ng-model="user.name" required/><br />
@@ -128,7 +128,7 @@ What do admins need to do?
             </thead>  
             <tr ng-repeat="assignedCourse in teacher.assignedCourses">
               <td>{{ assignedCourse }}</td>
-              <td><button ng-click="unassignTeacher(teacher.name, assignedCourse)">
+              <td><button ng-click="unassignTeacher(teacher.object, assignedCourse)">
                 <img ng-src="/assets/images/x-mark.gif"/>
               </button></td>
             </tr>
@@ -192,7 +192,7 @@ What do admins need to do?
             <tr ng-repeat="assignedCourse in student.assignedCourses">
               <td>{{ assignedCourse }}</td>
               <td>
-                <button ng-click="unassignStudent(student.name, assignedCourse)">
+                <button ng-click="unassignStudent(student.object, assignedCourse)">
                   <img ng-src="/assets/images/x-mark.gif"/>
                 </button>
               </td>
@@ -223,7 +223,7 @@ What do admins need to do?
             <tr ng-repeat="teacher in allTeachers">
               <td>{{teacher.name}}</td>
               <td>
-                <button ng-click="deleteStudent()">
+                <button ng-click="deleteTeacher(teacher.object)">
                   <img ng-src="/assets/images/x-mark.gif"/>
                 </button>
               </td>
@@ -254,7 +254,7 @@ What do admins need to do?
             <tr ng-repeat="student in allStudents">
               <td>{{student.name}}</td>
               <td>
-                <button ng-click="deleteStudent()">
+                <button ng-click="deleteStudent(student.object)">
                   <img ng-src="/assets/images/x-mark.gif"/>
                 </button>
               </td>
@@ -285,7 +285,7 @@ What do admins need to do?
             <tr ng-repeat="administrator in allAdministrators">
               <td>{{administrator.name}}</td>
               <td>
-                <button ng-click="deleteAdmin()">
+                <button ng-click="deleteAdmin(administrator.object)">
                   <img ng-src="/assets/images/x-mark.gif"/>
                 </button>
               </td>
