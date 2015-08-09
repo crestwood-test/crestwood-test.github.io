@@ -21,6 +21,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 				$('#createUserError').hide();
 				getTeachers();
 				getStudents();
+				getAdmins();
 				console.log(response);
 			},
 			error: function(error){
@@ -261,7 +262,9 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 				courses.forEach(function(course){
 					$scope.allCourses.push(
 					{
-						name:course.attributes.courseCode
+						code: course.attributes.courseCode,
+						id: course.id,
+						object: course
 					});
 					$scope.$apply();
 				});
@@ -300,7 +303,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 							if ($.inArray(course.attributes.courseCode, assignedCourseCodes) < 0){
 							// if (course.attributes.courseCode in assignedCourseCodes){
 								$scope.allUnassignedCourses.push({
-									name: course.attributes.courseCode
+									code: course.attributes.courseCode
 								});
 								$scope.$apply();
 							}
@@ -328,14 +331,16 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		courses: []
 	};
 
-	$scope.studentAssignCourses= {
+	$scope.studentAssignCourses = {
 		courses: []
 	}
 
 	$scope.assignStudent = function(assign){
-		var studentEmail = assign.studentName;
-		var courseCodes = $scope.studentAssignCourses.courses;
 		// debugger;
+		if (assign){
+			var studentEmail = assign.studentName;
+		}
+		var courseCodes = $scope.studentAssignCourses.courses;
 		var studentObject;
 		$scope.studentCoursesAlreadyAssigned = [];
 		$scope.studentCoursesSuccessfullyAssigned = [];
@@ -351,49 +356,63 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		if (!studentEmail){
 			// Please select a student
 			$('#studentAssignNoStudentSelected').show();
-			consoel.log("No student selected");
+			console.log("No student selected");
 
-		} else if (!courseCodes){
+		} else if (courseCodes.length == 0){
 			// Please select a class to assign
 			$('#studentAssignNoCourseSelected').show();
-			console.log("No course seelcted");
+			console.log("No course selected");
 		} else { // Assign the student to the courses. 
 			$scope.allStudents.forEach(function(student){
 				if (student.name == studentEmail){
 					studentObject = student;
 					console.log("Found student object");
 				}
-			})
+			});
 
-			//
 			var AssignedCoursesStudents = Parse.Object.extend("AssignedCoursesStudents");
-			var assignedCourse = new AssignedCoursesStudents();
+			
+			// debugger;
 			courseCodes.forEach(function(courseCode){
-
+				console.log(courseCode);
+				// debugger;
 				// Need to ensure the student is not already assigned this class
 				// If the course trying to be added is not already added, go ahead and add it
 				if ($.inArray(courseCode, studentObject.assignedCourses) < 0){
 
+					var assignedCourse = new AssignedCoursesStudents();
+					
 					assignedCourse.set("assignedStudent", studentObject.object);
 					assignedCourse.set("courseCode", courseCode);
 
-					// Permissions
-					var acl = new Parse.ACL();
-					acl.setPublicWriteAccess(false);
-					acl.setPublicReadAccess(false);
-					acl.setRoleReadAccess("Administrator", true);
-					acl.setRoleWriteAccess("Administrator", true);
-					acl.setReadAccess(studentObject.object.id, true);
-					assignedCourse.setACL(acl);
-
+					
+					console.log("Before save call: "  + assignedCourse.attributes.courseCode);
 					assignedCourse.save(null, {
+					// 	assignedStudent: studentObject.object,
+					// 	courseCode: courseCode
+					// }, {
 						success: function(assignedCourse){
+							// console.log("SAdasdadS" + assignedCourse.attributes.courseCode);
+							// debugger;
+							
+							// Permissions
+							var acl = new Parse.ACL();
+							acl.setPublicWriteAccess(false);
+							acl.setPublicReadAccess(false);
+							acl.setRoleReadAccess("Administrator", true);
+							acl.setRoleWriteAccess("Administrator", true);
+							acl.setReadAccess(studentObject.object.id, true);
+							assignedCourse.setACL(acl);
+							assignedCourse.save();
+
 							$('#assignStudentSuccess').show();
-							$scope.studentCoursesSuccessfullyAssigned.push(assignedCourse.attributes.courseCode);
+							// $scope.studentCoursesSuccessfullyAssigned.push(assignedCourse.attributes.courseCode);
+							$scope.studentCoursesSuccessfullyAssigned.push(courseCode);
 
 						},
 						error: function(assignedCourse, error){
 							// $('#assignStudentSuccess').hide()
+							debugger;
 							$('#assignStudentError').show();
 							console.log(error);
 
@@ -416,8 +435,9 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 
 	$scope.assignTeacher = function(assign){
 		// debugger;
-
-		var teacherEmail = assign.teacherName;
+		if (assign){
+			var teacherEmail = assign.teacherName;
+		}
 		var courseCodes = $scope.teacherAssignCourses.courses
 		var teacherObject;
 		$scope.teacherCoursesSuccessfullyAssigned = [];
@@ -432,7 +452,7 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		if (!teacherEmail){
 			// Please select a teacher
 			$('#teacherAssignNoTeacherSelected').show();
-		} else if(!courseCodes){
+		} else if(courseCodes.length == 0){
 			// Please select a class to assign
 			$('#teacherAssignNoTeacherSelected').hide();
 		} else { // Assign the teacher to the courses.
@@ -445,8 +465,8 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 			});
 
 			var AssignedCourses = Parse.Object.extend("AssignedCourses");
-			var assignedCourse = new AssignedCourses();
 			courseCodes.forEach(function(courseCode){
+				var assignedCourse = new AssignedCourses();
 				assignedCourse.set("assignedTeacher", teacherObject);
 				assignedCourse.set("courseCode", courseCode);
 				// debugger;
@@ -463,8 +483,8 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 						$('#assignTeacherSuccess').show();
 
 						$scope.teacherCoursesSuccessfullyAssigned.push(assignedCourse.attributes.courseCode);
-						getTeachers();
-
+						// getUnassignedCourses();
+						// getTeachers();
 						// getTeachers();
 						// getUnassignedCourses();
 					},
@@ -475,8 +495,10 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 				});
 				// getTeachers();
 				// Refresh list of available courses now.
-				getUnassignedCourses();
 			});
+			getUnassignedCourses();
+			getTeachers();
+			$scope.teacherAssignCourses.courses = [];
 			
 		}
 
@@ -497,8 +519,15 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 					assignedCourseObject.destroy({
 						success: function(assignedCourseObject){
 							// object delted successfully
+							// Hide any previous errors
+							$('#teacherAssignNoCourseSelected').hide();
+							$('#assignTeacherError').hide();
+							$('#assignTeacherSuccess').hide();
+							$('#teacherAssignNoTeacherSelected').hide();
+
 							getTeachers();
 							getUnassignedCourses();
+							$scope.$apply();
 							console.log("Deleted assigned teacher course object" + assignedCourseObject);
 						},
 						error: function(assignedCourseObject, error){
@@ -534,7 +563,16 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 				if (assignedCourseObject){
 					assignedCourseObject.destroy({
 						success: function(assignedCourseObject){
+							// Hide any previous messages
+							$('#assignStudentError').hide();
+							$('#studentAssignNoStudentSelected').hide();
+							$('#studentAssignNoCourseSelected').hide();
+							$('#assignStudentSuccess').hide();
+							$('#studentCoursesAlreadyAssigned').hide();
+							$('#studentCoursesAlreadyAssignedConfirmation').hide();
+
 							getStudents();
+							$scope.$apply();
 							console.log("Deleted assigned student course Object" + studentObject);
 						},
 						error: function(assignedCourseCodes, error){
@@ -676,6 +714,16 @@ app.controller('AdminIndexController', ['$scope', function($scope){
 		}
 
 	};
+
+	/*
+	 * Remove this course from the system. 
+	 */
+	$scope.deleteCourse = function(courseObject){
+		/*
+		* If a course is deleted, then anyone assigned to that course should also be removed from the course. 
+		*
+		*/
+	}
 
 	// $scope.teachersExist = function(){
 	// 	if ($scope.allTeachers.length == 0){
